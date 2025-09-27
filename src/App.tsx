@@ -6,9 +6,10 @@ import EmployeesPage from './pages/EmployeesPage';
 import ExpensesPage from './pages/ExpensesPage';
 import HRLeavePage from './pages/HRLeavePage';
 import HolidaysPage from './pages/HolidaysPage';
+import MasterPage from './pages/MasterPage';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('admin-dashboard');
+  const [currentPage, setCurrentPage] = useState('dashboard');
 
   const handleNavigate = (page: string) => {
     setCurrentPage(page);
@@ -21,9 +22,17 @@ function App() {
 
   const renderCurrentPage = () => {
     switch (currentPage) {
-      case 'admin-dashboard':
+      case 'dashboard':
         return (
           <AdminDashboardPage
+            onLogout={handleLogout}
+            currentPage={currentPage}
+            onNavigate={handleNavigate}
+          />
+        );
+      case 'master':
+        return (
+          <MasterPage
             onLogout={handleLogout}
             currentPage={currentPage}
             onNavigate={handleNavigate}

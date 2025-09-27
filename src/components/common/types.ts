@@ -42,6 +42,50 @@ export interface Employee {
   joining_date?: string;
   status: 'active' | 'inactive';
   created_date?: string;
+
+  // Additional fields to match the screenshot
+  code?: string;                    // Employee code (APL_02, APL_05, etc.)
+  work_type?: string;               // Work type (ONFIELD)
+  assign_to?: string;               // Assigned manager/supervisor
+  city?: string;                    // City location
+  contact?: string;                 // Contact number (can be different from phone)
+  division_department?: string;     // Division/Department (Main)
+  zone?: string;                    // Zone (Bihar, Bihar Jharkhand)
+  state?: string;                   // State (BIHAR)
+  address?: string;                 // Full address
+  date_of_birth?: string;          // Date of birth
+  date_of_joining?: string;        // Date of joining (separate from joining_date)
+
+  // Additional profile fields
+  gender?: string;                  // Male/Female
+  marital_status?: string;          // Single/Married/Divorced/Widowed
+  anniversary?: string;             // Anniversary date
+  alternate_contact?: string;       // Alternate contact number
+  permanent_address?: string;       // Permanent address
+  postal_code?: string;             // Zip/Postal code
+  additional_division?: string;     // Additional division
+  qualification?: string;           // Employee qualification
+  aadhar_number?: string;          // Aadhar number
+  pan_number?: string;             // PAN number
+  pf_number?: string;              // PF number
+  esc_number?: string;             // ESC number
+  pf_uan_number?: string;          // PF UAN number
+  license_number?: string;         // Driver's license number
+  license_expiry?: string;         // License expiry date
+  blood_group?: string;            // Blood group
+  da_ex?: number;                  // Daily allowance ex-station
+  da_out?: number;                 // Daily allowance out-station
+  da_rhq?: number;                 // Daily allowance RHQ
+  da_transit?: number;             // Daily allowance transit
+  da_other?: number;               // Daily allowance other
+  account_holder_name?: string;    // Bank account holder name
+  account_number?: string;         // Bank account number
+  ifsc_number?: string;            // IFSC code
+  beneficiary_id?: string;         // Beneficiary ID
+  bank_name?: string;              // Bank name
+  branch_name?: string;            // Branch name
+  nominee_name?: string;           // Nominee name
+  annual_income?: number;          // Annual income
 }
 
 export interface Expense {
@@ -115,6 +159,7 @@ export interface EmployeeListProps {
   employees: Employee[];
   isLoading: boolean;
   onEdit: (employee: Employee) => void;
+  onDelete?: (id: string) => void; // Add optional onDelete prop
 }
 
 export interface AddEmployeeModalProps {

@@ -7,7 +7,10 @@ import {
   DollarSign,
   UserCheck,
   CalendarDays,
-  User
+  User,
+  ChevronDown,
+  ChevronRight,
+  Database
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -17,55 +20,118 @@ interface SidebarItem {
   onClick?: () => void;
 }
 
+interface SidebarGroup {
+  title: string;
+  icon: React.ElementType;
+  items: SidebarItem[];
+  isExpanded?: boolean;
+}
+
 interface SidebarProps {
   onLogout?: () => void;
   currentPage?: string;
   onNavigate?: (page: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onLogout, currentPage = 'admin-dashboard', onNavigate }) => {
-  const navigationItems: SidebarItem[] = [
+const Sidebar: React.FC<SidebarProps> = ({ onLogout, currentPage = 'dashboard', onNavigate }) => {
+  const [expandedGroups, setExpandedGroups] = React.useState<Set<string>>(new Set(['dashboard']));
+
+  const toggleGroup = (groupTitle: string) => {
+    setExpandedGroups(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(groupTitle)) {
+        newSet.delete(groupTitle);
+      } else {
+        newSet.add(groupTitle);
+      }
+      return newSet;
+    });
+  };
+
+  const navigationGroups: SidebarGroup[] = [
     {
+      title: 'Dashboard',
       icon: LayoutDashboard,
-      label: 'Admin Dashboard',
-      isActive: currentPage === 'admin-dashboard',
-      onClick: () => onNavigate?.('admin-dashboard')
+      items: [
+        {
+          icon: LayoutDashboard,
+          label: 'Dashboard',
+          isActive: currentPage === 'dashboard',
+          onClick: () => onNavigate?.('dashboard')
+        }
+      ]
     },
     {
+      title: 'Visit Planning',
       icon: Calendar,
-      label: 'Visit Planning',
-      isActive: currentPage === 'visit-planning',
-      onClick: () => onNavigate?.('visit-planning')
+      items: [
+        {
+          icon: Calendar,
+          label: 'Visit Planning',
+          isActive: currentPage === 'visit-planning',
+          onClick: () => onNavigate?.('visit-planning')
+        }
+      ]
     },
     {
-      icon: Stethoscope,
-      label: 'Doctor Database',
-      isActive: currentPage === 'doctor-database',
-      onClick: () => onNavigate?.('doctor-database')
-    },
-    {
+      title: 'People',
       icon: Users,
-      label: 'Employees',
-      isActive: currentPage === 'employees',
-      onClick: () => onNavigate?.('employees')
+      items: [
+        {
+          icon: Stethoscope,
+          label: 'Doctor Database',
+          isActive: currentPage === 'doctor-database',
+          onClick: () => onNavigate?.('doctor-database')
+        },
+        {
+          icon: Users,
+          label: 'Employee',
+          isActive: currentPage === 'employees',
+          onClick: () => onNavigate?.('employees')
+        }
+      ]
     },
     {
-      icon: DollarSign,
-      label: 'Expenses',
-      isActive: currentPage === 'expenses',
-      onClick: () => onNavigate?.('expenses')
-    },
-    {
-      icon: UserCheck,
-      label: 'HR & Leave',
-      isActive: currentPage === 'hr-leave',
-      onClick: () => onNavigate?.('hr-leave')
-    },
-    {
+      title: 'Calendar',
       icon: CalendarDays,
-      label: 'Holidays',
-      isActive: currentPage === 'holidays',
-      onClick: () => onNavigate?.('holidays')
+      items: [
+        {
+          icon: CalendarDays,
+          label: 'Holiday',
+          isActive: currentPage === 'holidays',
+          onClick: () => onNavigate?.('holidays')
+        },
+        {
+          icon: UserCheck,
+          label: 'Leave',
+          isActive: currentPage === 'hr-leave',
+          onClick: () => onNavigate?.('hr-leave')
+        }
+      ]
+    },
+    {
+      title: 'Expenses',
+      icon: DollarSign,
+      items: [
+        {
+          icon: DollarSign,
+          label: 'Expenses',
+          isActive: currentPage === 'expenses',
+          onClick: () => onNavigate?.('expenses')
+        }
+      ]
+    },
+    {
+      title: 'Master',
+      icon: Database,
+      items: [
+        {
+          icon: Database,
+          label: 'Master Data',
+          isActive: currentPage === 'master',
+          onClick: () => onNavigate?.('master')
+        }
+      ]
     }
   ];
 
@@ -85,27 +151,81 @@ const Sidebar: React.FC<SidebarProps> = ({ onLogout, currentPage = 'admin-dashbo
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 py-6">
-        <div className="px-4 mb-6">
+      <div className="flex-1 py-6 overflow-y-auto">
+        <div className="px-4">
           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
             MAIN NAVIGATION
           </h3>
           <nav className="space-y-1">
-            {navigationItems.map((item, index) => {
-              const Icon = item.icon;
+            {navigationGroups.map((group, groupIndex) => {
+              const GroupIcon = group.icon;
+              const isExpanded = expandedGroups.has(group.title);
+              const hasMultipleItems = group.items.length > 1;
+
               return (
-                <button
-                  key={index}
-                  onClick={item.onClick}
-                  className={`w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    item.isActive
-                      ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
-                >
-                  <Icon className="w-5 h-5 mr-3" />
-                  {item.label}
-                </button>
+                <div key={groupIndex}>
+                  {hasMultipleItems ? (
+                    <>
+                      {/* Group Header (Collapsible) */}
+                      <button
+                        onClick={() => toggleGroup(group.title)}
+                        className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                      >
+                        <div className="flex items-center">
+                          <GroupIcon className="w-5 h-5 mr-3" />
+                          {group.title}
+                        </div>
+                        {isExpanded ? (
+                          <ChevronDown className="w-4 h-4" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4" />
+                        )}
+                      </button>
+
+                      {/* Group Items */}
+                      {isExpanded && (
+                        <div className="ml-6 mt-1 space-y-1">
+                          {group.items.map((item, itemIndex) => {
+                            const Icon = item.icon;
+                            return (
+                              <button
+                                key={itemIndex}
+                                onClick={item.onClick}
+                                className={`w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                  item.isActive
+                                    ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
+                                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                }`}
+                              >
+                                <Icon className="w-4 h-4 mr-3" />
+                                {item.label}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    /* Single Item Groups (Direct Links) */
+                    group.items.map((item, itemIndex) => {
+                      const Icon = item.icon;
+                      return (
+                        <button
+                          key={itemIndex}
+                          onClick={item.onClick}
+                          className={`w-full flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            item.isActive
+                              ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
+                              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                          }`}
+                        >
+                          <Icon className="w-5 h-5 mr-3" />
+                          {item.label}
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
               );
             })}
           </nav>
