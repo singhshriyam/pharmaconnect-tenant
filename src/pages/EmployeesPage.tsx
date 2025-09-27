@@ -2,8 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { UserPlus, Download, Upload } from "lucide-react";
 
 import EmployeeList from "../components/employees/EmployeeList";
-import AddEmployeeModal from "../components/employees/AddEmployeeModal";
-import EditEmployeeForm from "../components/employees/EditEmployeeForm";
+import EmployeeFormModal from "../components/employees/EmployeeFormModal";
 import Sidebar from "../components/dashboard/Sidebar";
 
 // Import ALL types from centralized location - NO local interfaces
@@ -169,7 +168,7 @@ let mockEmployees: Employee[] = [
   }
 ];
 
-// Mock API functions that actually modify data
+// Mock API functions
 const EmployeeAPI = {
   list: async (): Promise<Employee[]> => {
     console.log('Loading employees from mock storage:', mockEmployees.length);
@@ -325,7 +324,7 @@ const EmployeesPage: React.FC<EmployeesPageProps> = ({ onLogout, onNavigate }) =
     if (!file) return;
 
     console.log("File upload:", file.name);
-    alert("File upload functionality will be implemented with actual CSV parsing. Employees should be invited via the User Management system.");
+    alert("File upload functionality will be implemented with actual CSV parsing.");
 
     event.target.value = '';
   };
@@ -335,14 +334,15 @@ const EmployeesPage: React.FC<EmployeesPageProps> = ({ onLogout, onNavigate }) =
     setIsEditModalOpen(true);
   };
 
-  const handleUpdate = async (): Promise<void> => {
-    console.log("Employee updated successfully!");
-    await loadEmployees();
-  };
-
   const handleAddSuccess = async (): Promise<void> => {
     console.log("Employee added successfully!");
     setIsAddModalOpen(false);
+    await loadEmployees();
+  };
+
+  const handleUpdateSuccess = async (): Promise<void> => {
+    console.log("Employee updated successfully!");
+    setIsEditModalOpen(false);
     await loadEmployees();
   };
 
@@ -405,21 +405,23 @@ const EmployeesPage: React.FC<EmployeesPageProps> = ({ onLogout, onNavigate }) =
             />
 
             {/* Add Employee Modal */}
-            <AddEmployeeModal
+            <EmployeeFormModal
               isOpen={isAddModalOpen}
               onOpenChange={setIsAddModalOpen}
               onSuccess={handleAddSuccess}
+              title="Add Employee"
+              submitButtonText="Add Employee"
             />
 
-            {/* Edit Employee Form */}
-            {selectedEmployee && (
-              <EditEmployeeForm
-                isOpen={isEditModalOpen}
-                onOpenChange={setIsEditModalOpen}
-                employee={selectedEmployee}
-                onUpdate={handleUpdate}
-              />
-            )}
+            {/* Edit Employee Modal */}
+            <EmployeeFormModal
+              isOpen={isEditModalOpen}
+              onOpenChange={setIsEditModalOpen}
+              employee={selectedEmployee}
+              onSuccess={handleUpdateSuccess}
+              title={`${selectedEmployee?.full_name} - Personal Info`}
+              submitButtonText="Update Employee"
+            />
           </div>
         </div>
       </div>

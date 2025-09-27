@@ -1,4 +1,3 @@
-// Shared type definitions for the CRM application
 export interface Visit {
   id: string;
   doctor_id: string;
@@ -26,6 +25,19 @@ export interface Doctor {
   location_lat?: number;
   location_lng?: number;
   created_date?: string;
+  registration_number?: string;
+  doctor_code?: string;
+  city?: string;
+  hospital_name?: string;
+  employee_name?: string;
+  immediate_senior?: string;
+  contact_no?: string;
+  qualification?: string;
+  division?: string;
+  category?: string;
+  zone?: string;
+  gender?: string;
+  date_of_birth?: string;
 }
 
 export interface Employee {
@@ -42,50 +54,46 @@ export interface Employee {
   joining_date?: string;
   status: 'active' | 'inactive';
   created_date?: string;
-
-  // Additional fields to match the screenshot
-  code?: string;                    // Employee code (APL_02, APL_05, etc.)
-  work_type?: string;               // Work type (ONFIELD)
-  assign_to?: string;               // Assigned manager/supervisor
-  city?: string;                    // City location
-  contact?: string;                 // Contact number (can be different from phone)
-  division_department?: string;     // Division/Department (Main)
-  zone?: string;                    // Zone (Bihar, Bihar Jharkhand)
-  state?: string;                   // State (BIHAR)
-  address?: string;                 // Full address
-  date_of_birth?: string;          // Date of birth
-  date_of_joining?: string;        // Date of joining (separate from joining_date)
-
-  // Additional profile fields
-  gender?: string;                  // Male/Female
-  marital_status?: string;          // Single/Married/Divorced/Widowed
-  anniversary?: string;             // Anniversary date
-  alternate_contact?: string;       // Alternate contact number
-  permanent_address?: string;       // Permanent address
-  postal_code?: string;             // Zip/Postal code
-  additional_division?: string;     // Additional division
-  qualification?: string;           // Employee qualification
-  aadhar_number?: string;          // Aadhar number
-  pan_number?: string;             // PAN number
-  pf_number?: string;              // PF number
-  esc_number?: string;             // ESC number
-  pf_uan_number?: string;          // PF UAN number
-  license_number?: string;         // Driver's license number
-  license_expiry?: string;         // License expiry date
-  blood_group?: string;            // Blood group
-  da_ex?: number;                  // Daily allowance ex-station
-  da_out?: number;                 // Daily allowance out-station
-  da_rhq?: number;                 // Daily allowance RHQ
-  da_transit?: number;             // Daily allowance transit
-  da_other?: number;               // Daily allowance other
-  account_holder_name?: string;    // Bank account holder name
-  account_number?: string;         // Bank account number
-  ifsc_number?: string;            // IFSC code
-  beneficiary_id?: string;         // Beneficiary ID
-  bank_name?: string;              // Bank name
-  branch_name?: string;            // Branch name
-  nominee_name?: string;           // Nominee name
-  annual_income?: number;          // Annual income
+  code?: string;
+  work_type?: string;
+  assign_to?: string;
+  city?: string;
+  contact?: string;
+  division_department?: string;
+  zone?: string;
+  state?: string;
+  address?: string;
+  date_of_birth?: string;
+  date_of_joining?: string;
+  gender?: string;
+  marital_status?: string;
+  anniversary?: string;
+  alternate_contact?: string;
+  permanent_address?: string;
+  postal_code?: string;
+  additional_division?: string;
+  qualification?: string;
+  aadhar_number?: string;
+  pan_number?: string;
+  pf_number?: string;
+  esc_number?: string;
+  pf_uan_number?: string;
+  license_number?: string;
+  license_expiry?: string;
+  blood_group?: string;
+  da_ex?: number;
+  da_out?: number;
+  da_rhq?: number;
+  da_transit?: number;
+  da_other?: number;
+  account_holder_name?: string;
+  account_number?: string;
+  ifsc_number?: string;
+  beneficiary_id?: string;
+  bank_name?: string;
+  branch_name?: string;
+  nominee_name?: string;
+  annual_income?: number;
 }
 
 export interface Expense {
@@ -95,7 +103,7 @@ export interface Expense {
   expense_date: string;
   description: string;
   doctor_visited?: string;
-  receipt_url?: string; // Keep as optional string for consistency
+  receipt_url?: string;
   status: 'Pending' | 'Approved' | 'Rejected' | 'Reimbursed';
   territory?: string;
   created_by?: string;
@@ -105,16 +113,41 @@ export interface Expense {
   created_date?: string;
 }
 
-// Form Data Types (for submissions without id/created_date)
 export interface VisitFormData extends Omit<Visit, 'id'> {}
-export interface DoctorFormData extends Omit<Doctor, 'id' | 'created_date'> {}
-export interface EmployeeFormData extends Omit<Employee, 'id' | 'created_date' | 'email' | 'role'> {}
-// Fix ExpenseFormData to have consistent receipt_url typing
-export interface ExpenseFormData extends Omit<Expense, 'id' | 'created_date' | 'created_by' | 'approved_by' | 'approved_date'> {
-  receipt_url?: string; // Ensure consistent typing
+
+export interface DoctorFormData extends Omit<Doctor, 'id' | 'created_date'> {
+  name: string;
+  specialty: string;
+  clinic_name: string;
+  address: string;
+  territory: string;
+  phone: string;
+  email: string;
+  potential: 'High' | 'Medium' | 'Low';
+  notes: string;
+  location_lat?: number;
+  location_lng?: number;
+  registration_number?: string;
+  doctor_code?: string;
+  city?: string;
+  hospital_name?: string;
+  employee_name?: string;
+  immediate_senior?: string;
+  contact_no?: string;
+  qualification?: string;
+  division?: string;
+  category?: string;
+  zone?: string;
+  gender?: string;
+  date_of_birth?: string;
 }
 
-// Visit Planning Component Props
+export interface EmployeeFormData extends Omit<Employee, 'id' | 'created_date' | 'email' | 'role'> {}
+
+export interface ExpenseFormData extends Omit<Expense, 'id' | 'created_date' | 'created_by' | 'approved_by' | 'approved_date'> {
+  receipt_url?: string;
+}
+
 export interface CalendarViewProps {
   visits: Visit[];
   selectedDate: Date;
@@ -140,7 +173,6 @@ export interface VisitFormProps {
   onCancel: () => void;
 }
 
-// Doctor Database Component Props
 export interface DoctorListProps {
   doctors: Doctor[];
   isLoading: boolean;
@@ -154,18 +186,26 @@ export interface DoctorFormProps {
   onCancel: () => void;
 }
 
-// Employee Management Component Props
+export interface DoctorFormModalProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  doctor?: Doctor | null;
+  onSubmit: (data: DoctorFormData) => void;
+  title: string;
+  submitButtonText: string;
+}
+
 export interface EmployeeListProps {
   employees: Employee[];
   isLoading: boolean;
   onEdit: (employee: Employee) => void;
-  onDelete?: (id: string) => void; // Add optional onDelete prop
+  onDelete?: (id: string) => void;
 }
 
 export interface AddEmployeeModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess?: () => void | Promise<void>; // Add onSuccess callback
+  onSuccess?: () => void | Promise<void>;
 }
 
 export interface EditEmployeeFormProps {
@@ -175,7 +215,15 @@ export interface EditEmployeeFormProps {
   onUpdate: () => void;
 }
 
-// Expense Management Component Props
+export interface EmployeeFormModalProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  employee?: Employee | null;
+  onSuccess: () => void;
+  title: string;
+  submitButtonText: string;
+}
+
 export interface ExpenseListProps {
   expenses: Expense[];
   isLoading: boolean;
@@ -190,7 +238,6 @@ export interface ExpenseFormProps {
   onCancel: () => void;
 }
 
-// Page Component Props
 export interface VisitPlanningPageProps {
   onLogout?: () => void;
   onNavigate?: (page: string) => void;
@@ -211,7 +258,6 @@ export interface ExpensesPageProps {
   onNavigate?: (page: string) => void;
 }
 
-// Leave Request Types
 export interface LeaveRequest {
   id: string;
   leave_type: string;
@@ -228,10 +274,8 @@ export interface LeaveRequest {
   created_date?: string;
 }
 
-// Form Data Types for Leave Request
 export interface LeaveRequestFormData extends Omit<LeaveRequest, 'id' | 'created_date' | 'created_by' | 'approved_by' | 'approved_date' | 'status'> {}
 
-// Leave Management Component Props
 export interface LeaveListProps {
   requests: LeaveRequest[];
   isLoading: boolean;
@@ -247,4 +291,44 @@ export interface LeaveFormProps {
 export interface HRPageProps {
   onLogout?: () => void;
   onNavigate?: (page: string) => void;
+}
+
+export interface PersonalInfoTabProps {
+  formData: Partial<Employee>;
+  onInputChange: (field: string, value: string | number) => void;
+}
+
+export interface ContactInfoTabProps {
+  formData: Partial<Employee>;
+  onInputChange: (field: string, value: string | number) => void;
+}
+
+export interface WorkInfoTabProps {
+  formData: Partial<Employee>;
+  onInputChange: (field: string, value: string | number) => void;
+}
+
+export interface OtherInfoTabProps {
+  formData: Partial<Employee>;
+  onInputChange: (field: string, value: string | number) => void;
+}
+
+export interface AccountInfoTabProps {
+  formData: Partial<Employee>;
+  onInputChange: (field: string, value: string | number) => void;
+}
+
+export interface DoctorBasicInfoTabProps {
+  formData: Partial<DoctorFormData>;
+  onInputChange: (field: string, value: string | number) => void;
+}
+
+export interface DoctorContactInfoTabProps {
+  formData: Partial<DoctorFormData>;
+  onInputChange: (field: string, value: string | number) => void;
+}
+
+export interface DoctorProfessionalInfoTabProps {
+  formData: Partial<DoctorFormData>;
+  onInputChange: (field: string, value: string | number) => void;
 }

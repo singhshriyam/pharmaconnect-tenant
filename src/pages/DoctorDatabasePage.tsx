@@ -2,13 +2,13 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Plus, Download, Upload } from "lucide-react";
 
 import DoctorList from "../components/doctors/DoctorList";
-import DoctorForm from "../components/doctors/DoctorForm";
+import DoctorFormModal from "../components/doctors/DoctorFormModal";
 import Sidebar from "../components/dashboard/Sidebar";
 
 // Import ALL types from centralized location - NO local interfaces
 import { Doctor, DoctorFormData, DoctorDatabasePageProps } from "../components/common/types";
 
-// In-memory storage for mock data
+// In-memory storage for mock data with enhanced fields
 let mockDoctors: Doctor[] = [
   {
     id: '1',
@@ -23,7 +23,21 @@ let mockDoctors: Doctor[] = [
     notes: 'Specializes in sports medicine',
     location_lat: 28.6139,
     location_lng: 77.2090,
-    created_date: '2024-01-15'
+    created_date: '2024-01-15',
+    // Additional fields from screenshot
+    registration_number: '2639',
+    doctor_code: 'DOC001',
+    city: 'Delhi',
+    hospital_name: 'Apollo Hospital',
+    employee_name: 'Anuj Kumar',
+    immediate_senior: 'Vishal Kumar Srivastava',
+    contact_no: '9876543210',
+    qualification: 'MBBS, MS Orthopedics',
+    division: 'Main',
+    category: 'A',
+    zone: 'North',
+    gender: 'Male',
+    date_of_birth: '1980-05-15'
   },
   {
     id: '2',
@@ -38,7 +52,20 @@ let mockDoctors: Doctor[] = [
     notes: 'Very receptive to new treatments',
     location_lat: 28.7041,
     location_lng: 77.1025,
-    created_date: '2024-01-20'
+    created_date: '2024-01-20',
+    registration_number: '2431',
+    doctor_code: 'DOC002',
+    city: 'Mumbai',
+    hospital_name: 'Fortis Hospital',
+    employee_name: 'Anuj Kumar',
+    immediate_senior: 'Vishal Kumar Srivastava',
+    contact_no: '9876543211',
+    qualification: 'MBBS, MD',
+    division: 'Main',
+    category: 'B',
+    zone: 'West',
+    gender: 'Female',
+    date_of_birth: '1985-03-20'
   },
   {
     id: '3',
@@ -53,7 +80,19 @@ let mockDoctors: Doctor[] = [
     notes: 'Focuses on Type 2 diabetes management',
     location_lat: 28.5355,
     location_lng: 77.3910,
-    created_date: '2024-02-01'
+    created_date: '2024-02-01',
+    registration_number: '264',
+    doctor_code: 'DOC003',
+    hospital_name: 'Max Hospital',
+    employee_name: 'Anuj Kumar',
+    immediate_senior: 'Vishal Kumar Srivastava',
+    contact_no: '9876543212',
+    qualification: 'MBBS, MD Endocrinology',
+    division: 'Main',
+    category: 'A',
+    zone: 'South',
+    gender: 'Female',
+    date_of_birth: '1982-08-10'
   },
   {
     id: '4',
@@ -68,7 +107,20 @@ let mockDoctors: Doctor[] = [
     notes: 'Leading neurologist in the region',
     location_lat: 28.6129,
     location_lng: 77.2295,
-    created_date: '2024-02-10'
+    created_date: '2024-02-10',
+    registration_number: '2662',
+    doctor_code: 'DOC004',
+    city: 'Chennai',
+    hospital_name: 'Apollo Neuro Center',
+    employee_name: 'Anuj Kumar',
+    immediate_senior: 'Vishal Kumar Srivastava',
+    contact_no: '9876543213',
+    qualification: 'MBBS, DM Neurology',
+    division: 'Main',
+    category: 'A',
+    zone: 'South',
+    gender: 'Male',
+    date_of_birth: '1978-12-05'
   },
   {
     id: '5',
@@ -83,7 +135,20 @@ let mockDoctors: Doctor[] = [
     notes: 'Interventional cardiologist',
     location_lat: 28.7041,
     location_lng: 77.1025,
-    created_date: '2024-02-15'
+    created_date: '2024-02-15',
+    registration_number: '8138',
+    doctor_code: 'DOC005',
+    city: 'Kolkata',
+    hospital_name: 'AMRI Hospital',
+    employee_name: 'Anuj Kumar',
+    immediate_senior: 'Vishal Kumar Srivastava',
+    contact_no: '9876543214',
+    qualification: 'MBBS, DM Cardiology',
+    division: 'Main',
+    category: 'B',
+    zone: 'East',
+    gender: 'Female',
+    date_of_birth: '1981-07-22'
   }
 ];
 
@@ -152,18 +217,37 @@ const DoctorAPI = {
 };
 
 const exportToCsv = (filename: string, data: Doctor[]): void => {
-  const headers = ['Name', 'Specialty', 'Clinic', 'Territory', 'Phone', 'Email', 'Potential', 'Address'];
+  const headers = [
+    'Add Date', 'Registration Number', 'Doctor Code', 'Doctor Name', 'City',
+    'Hospital Name', 'Employee Name', 'Immediate Senior', 'Contact No',
+    'Specialty', 'Qualification', 'Division', 'Category', 'Zone', 'Email',
+    'Gender', 'Date of Birth', 'Territory', 'Potential', 'Address', 'Notes'
+  ];
+
   const csvContent = [
     headers.join(','),
     ...data.map((doctor: Doctor) => [
+      doctor.created_date,
+      (doctor as any).registration_number || '',
+      (doctor as any).doctor_code || '',
       doctor.name,
+      (doctor as any).city || '',
+      (doctor as any).hospital_name || '',
+      (doctor as any).employee_name || '',
+      (doctor as any).immediate_senior || '',
+      (doctor as any).contact_no || doctor.phone,
       doctor.specialty,
-      doctor.clinic_name,
-      doctor.territory,
-      doctor.phone,
+      (doctor as any).qualification || '',
+      (doctor as any).division || '',
+      (doctor as any).category || '',
+      (doctor as any).zone || '',
       doctor.email,
+      (doctor as any).gender || '',
+      (doctor as any).date_of_birth || '',
+      doctor.territory,
       doctor.potential,
-      doctor.address
+      doctor.address,
+      doctor.notes || ''
     ].map(field => `"${field}"`).join(','))
   ].join('\n');
 
@@ -179,7 +263,8 @@ const exportToCsv = (filename: string, data: Doctor[]): void => {
 const DoctorDatabasePage: React.FC<DoctorDatabasePageProps> = ({ onLogout, onNavigate }) => {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<Doctor | null>(null);
 
   const loadDoctors = useCallback(async (): Promise<void> => {
@@ -199,7 +284,7 @@ const DoctorDatabasePage: React.FC<DoctorDatabasePageProps> = ({ onLogout, onNav
 
   const handleEdit = (doctor: Doctor): void => {
     setEditingDoctor(doctor);
-    setShowForm(true);
+    setIsEditModalOpen(true);
   };
 
   const handleDelete = async (doctorId: string): Promise<void> => {
@@ -219,7 +304,8 @@ const DoctorDatabasePage: React.FC<DoctorDatabasePageProps> = ({ onLogout, onNav
       } else {
         await DoctorAPI.create(doctorData);
       }
-      setShowForm(false);
+      setIsAddModalOpen(false);
+      setIsEditModalOpen(false);
       setEditingDoctor(null);
       await loadDoctors();
     } catch (error) {
@@ -283,10 +369,7 @@ const DoctorDatabasePage: React.FC<DoctorDatabasePageProps> = ({ onLogout, onNav
                   Export
                 </button>
                 <button
-                  onClick={() => {
-                    setEditingDoctor(null);
-                    setShowForm(true);
-                  }}
+                  onClick={() => setIsAddModalOpen(true)}
                   className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -295,29 +378,31 @@ const DoctorDatabasePage: React.FC<DoctorDatabasePageProps> = ({ onLogout, onNav
               </div>
             </div>
 
-            {/* Doctor Form Modal */}
-            {showForm && (
-              <div className="mb-8 bg-white rounded-xl shadow-lg border p-6">
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">
-                  {editingDoctor ? 'Edit Doctor Information' : 'Add New Doctor'}
-                </h3>
-                <DoctorForm
-                  doctor={editingDoctor}
-                  onSubmit={handleSubmit}
-                  onCancel={() => {
-                    setShowForm(false);
-                    setEditingDoctor(null);
-                  }}
-                />
-              </div>
-            )}
-
             {/* Doctor List */}
             <DoctorList
               doctors={doctors}
               isLoading={isLoading}
               onEdit={handleEdit}
               onDelete={handleDelete}
+            />
+
+            {/* Add Doctor Modal */}
+            <DoctorFormModal
+              isOpen={isAddModalOpen}
+              onOpenChange={setIsAddModalOpen}
+              onSubmit={handleSubmit}
+              title="Add New Doctor"
+              submitButtonText="Add Doctor"
+            />
+
+            {/* Edit Doctor Modal */}
+            <DoctorFormModal
+              isOpen={isEditModalOpen}
+              onOpenChange={setIsEditModalOpen}
+              doctor={editingDoctor}
+              onSubmit={handleSubmit}
+              title={`${editingDoctor?.name} - Doctor Information`}
+              submitButtonText="Update Doctor"
             />
           </div>
         </div>
