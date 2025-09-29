@@ -113,6 +113,47 @@ export interface Expense {
   created_date?: string;
 }
 
+export interface LeaveRequest {
+  id: string;
+  leave_type: string;
+  start_date: string;
+  end_date: string;
+  total_days: number;
+  reason: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  territory?: string;
+  created_by?: string;
+  manager_comments?: string;
+  approved_by?: string;
+  approved_date?: string;
+  created_date?: string;
+}
+
+export interface Holiday {
+  id: string;
+  zone: string;
+  date: string;
+  occasion: string;
+  type: 'public' | 'restricted';
+  created_date?: string;
+}
+
+export interface TourPlan {
+  id: string;
+  employee_name: string;
+  designation: string;
+  month: string;
+  year?: string;
+  status: 'Pending' | 'Approved' | 'Rejected';
+  approved_by?: string;
+  approved_date?: string;
+  planned_dates: string[];
+  deviated_dates?: string[];
+  created_date?: string;
+  whole_month_tour_plan?: string;
+}
+
+// Form Data Interfaces
 export interface VisitFormData extends Omit<Visit, 'id'> {}
 
 export interface DoctorFormData extends Omit<Doctor, 'id' | 'created_date'> {
@@ -148,6 +189,16 @@ export interface ExpenseFormData extends Omit<Expense, 'id' | 'created_date' | '
   receipt_url?: string;
 }
 
+export interface LeaveRequestFormData extends Omit<LeaveRequest, 'id' | 'created_date' | 'created_by' | 'approved_by' | 'approved_date' | 'status'> {}
+
+export interface HolidayFormData extends Omit<Holiday, 'id' | 'created_date'> {
+  zone: string;
+  date: string;
+  occasion: string;
+  type: 'public' | 'restricted';
+}
+
+// Component Props Interfaces
 export interface CalendarViewProps {
   visits: Visit[];
   selectedDate: Date;
@@ -238,6 +289,31 @@ export interface ExpenseFormProps {
   onCancel: () => void;
 }
 
+export interface LeaveListProps {
+  requests: LeaveRequest[];
+  isLoading: boolean;
+  userRole?: string;
+  onStatusUpdate: (request: LeaveRequest, newStatus: string, comments: string) => void;
+}
+
+export interface LeaveFormProps {
+  onSubmit: (leaveData: LeaveRequestFormData) => void;
+  onCancel: () => void;
+}
+
+export interface HolidayListProps {
+  holidays: Holiday[];
+  isLoading: boolean;
+  onDelete: (id: string) => void;
+}
+
+export interface TourPlanListProps {
+  tourPlans: TourPlan[];
+  isLoading: boolean;
+  onViewApproval: () => void;
+}
+
+// Page Props Interfaces
 export interface VisitPlanningPageProps {
   onLogout?: () => void;
   onNavigate?: (page: string) => void;
@@ -258,41 +334,17 @@ export interface ExpensesPageProps {
   onNavigate?: (page: string) => void;
 }
 
-export interface LeaveRequest {
-  id: string;
-  leave_type: string;
-  start_date: string;
-  end_date: string;
-  total_days: number;
-  reason: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
-  territory?: string;
-  created_by?: string;
-  manager_comments?: string;
-  approved_by?: string;
-  approved_date?: string;
-  created_date?: string;
-}
-
-export interface LeaveRequestFormData extends Omit<LeaveRequest, 'id' | 'created_date' | 'created_by' | 'approved_by' | 'approved_date' | 'status'> {}
-
-export interface LeaveListProps {
-  requests: LeaveRequest[];
-  isLoading: boolean;
-  userRole?: string;
-  onStatusUpdate: (request: LeaveRequest, newStatus: string, comments: string) => void;
-}
-
-export interface LeaveFormProps {
-  onSubmit: (leaveData: LeaveRequestFormData) => void;
-  onCancel: () => void;
-}
-
 export interface HRPageProps {
   onLogout?: () => void;
   onNavigate?: (page: string) => void;
 }
 
+export interface HolidaysPageProps {
+  onLogout?: () => void;
+  onNavigate?: (page: string) => void;
+}
+
+// Tab Props Interfaces
 export interface PersonalInfoTabProps {
   formData: Partial<Employee>;
   onInputChange: (field: string, value: string | number) => void;
@@ -331,4 +383,50 @@ export interface DoctorContactInfoTabProps {
 export interface DoctorProfessionalInfoTabProps {
   formData: Partial<DoctorFormData>;
   onInputChange: (field: string, value: string | number) => void;
+}
+
+export interface TourPlanFormData {
+  employee_name: string;
+  designation: string;
+  month: string;
+  year: string;
+  planned_dates: string[];
+  deviated_dates?: string[];
+  whole_month_tour_plan?: string;
+}
+
+export interface TourPlanApprovalListProps {
+  tourPlans: TourPlan[];
+  isLoading: boolean;
+  onBack: () => void;
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
+}
+
+export interface AddTourPlanModalProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (data: TourPlanFormData) => void;
+}
+
+export interface ViewTourPlanModalProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  tourPlan: TourPlan;
+}
+
+export interface TourPlanListProps {
+  tourPlans: TourPlan[];
+  isLoading: boolean;
+  onViewApproval: () => void;
+  onAddTourPlan: () => void;
+}
+
+export interface ApproveTourPlanModalProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  tourPlans: TourPlan[];
+  onView: (plan: TourPlan) => void;
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
 }
